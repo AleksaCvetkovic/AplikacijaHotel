@@ -3,6 +3,7 @@ import { AdministratorService } from "src/services/administrator/administrator.s
 import { Administrator } from "entities/administrator.entity";
 import { addAdministratorDto } from "src/dtos/administrator/add.administrator.dto";
 import { editAdministratorDto } from "src/dtos/administrator/edit.administrator.dto";
+import { ApiResponse } from "src/misk/api.response.class";
 
 @Controller('api/administrator')
 export class administratorController {
@@ -15,15 +16,22 @@ export class administratorController {
       return this.administratorService.getAll();
     }
     @Get(':id/')
-    getbyid( @Param('id') administratorId: number): Promise<Administrator>{
-      return this.administratorService.getById(administratorId);
+    getbyid( @Param('id') administratorId: number): Promise<Administrator | ApiResponse>{
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      return new Promise(async (resolve) => {
+      const admin = await this.administratorService.getById(administratorId);
+        if(admin === undefined){
+          resolve(new ApiResponse("error", -1002));
+        }
+        resolve(admin);
+      });
     }
     @Put()
-    add( @Body() data: addAdministratorDto ): Promise<Administrator>{
+    add( @Body() data: addAdministratorDto ): Promise<Administrator | ApiResponse>{
         return this.administratorService.add(data);
     }
     @Post(':id')
-    edit(@Param('id') id: number, @Body() data: editAdministratorDto): Promise<Administrator>{
+    edit(@Param('id') id: number, @Body() data: editAdministratorDto): Promise<Administrator | ApiResponse>{
         return this.administratorService.editById(id, data);
     }
 }
