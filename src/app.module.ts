@@ -13,6 +13,8 @@ import { Photo } from 'entities/photo.entity';
 import { Reservation } from 'entities/reservation.entity';
 import { User } from 'entities/user.entity';
 import { administratorController } from './controllers/api/administrator.controller';
+import { CategoryControler } from './controllers/api/category.controller';
+import { CategoryService } from './services/category/category.service';
 
 @Module({
   imports: [
@@ -35,11 +37,19 @@ import { administratorController } from './controllers/api/administrator.control
          User,
        ]
     }),
-    TypeOrmModule.forFeature([ Administrator ])
+    TypeOrmModule.forFeature([ 
+      Administrator,
+      Category
+    ])
   ],
-  controllers: [AppController,
-  administratorController
+  controllers: [
+    AppController,
+    administratorController,
+    CategoryControler,
 ],
-  providers: [AdministratorService],
+  providers: [
+    AdministratorService,
+    CategoryService,
+  ],
 })
 export class AppModule {}
