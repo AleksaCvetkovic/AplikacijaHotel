@@ -12,7 +12,7 @@ export class AuthMiddlewere implements NestMiddleware {
     async use(req: Request, res: Response, next: NextFunction) {
         
        if (!req.headers.authorization) {
-            throw new HttpException('ugasio si ga', HttpStatus.UNAUTHORIZED);
+            throw new HttpException('token not found ', HttpStatus.UNAUTHORIZED);
        }
 
        const token = req.headers.authorization;

@@ -20,7 +20,7 @@ import * as fs from 'fs';
     },
     params: {
         id: {
-            field: 'articleId',
+            field: 'article_id',
             type: 'number',
             primary: true
         }
