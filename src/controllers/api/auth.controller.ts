@@ -36,7 +36,7 @@ export class AuthController {
             const sada = new Date();
             sada.setDate(sada.getDate() + 7);
             const istekDatuma = sada.getTime() / 1000.;
-            jwtData.ext = istekDatuma;
+            jwtData.exp = istekDatuma;
 
             jwtData.ip = req.ip.toString();
             jwtData.ua = req.headers["user-agent"];

@@ -7,7 +7,7 @@ import { JwtSecret } from "config/jwt.secret";
 
 @Injectable()
 export class AuthMiddlewere implements NestMiddleware {
-    constructor( private  administratorService: AdministratorService ) { } 
+    constructor( public  administratorService: AdministratorService ) { } 
 
     async use(req: Request, res: Response, next: NextFunction) {
         
@@ -17,7 +17,19 @@ export class AuthMiddlewere implements NestMiddleware {
 
        const token = req.headers.authorization;
 
-       const jwtData: jwtDataAdministratorDto = jwt.varify(token, JwtSecret);
+       const tokenParts = token.split(' ');
+       if (tokenParts.length !== 2){
+        throw new HttpException('bad token found', HttpStatus.UNAUTHORIZED);
+       }
+       const tokenString = tokenParts[1];
+
+       let jwtData: jwtDataAdministratorDto; 
+       
+       try{
+           jwt.varify(tokenString, JwtSecret);
+       } catch(e){
+        throw new HttpException('bad token found', HttpStatus.UNAUTHORIZED);
+       }
        if (!jwtData){
            throw new HttpException('bad token found', HttpStatus.UNAUTHORIZED);
        }
@@ -36,7 +48,7 @@ export class AuthMiddlewere implements NestMiddleware {
         throw new HttpException('Acaunt token found', HttpStatus.UNAUTHORIZED);
        }
        const trenutniTimestamp = new Date().getTime() / 1000;
-       if ( trenutniTimestamp >= jwtData.ext ){
+       if ( trenutniTimestamp >= jwtData.exp ){
         throw new HttpException('the token has expire', HttpStatus.UNAUTHORIZED);
        }
 
