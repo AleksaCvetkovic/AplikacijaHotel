@@ -4,13 +4,14 @@ import { AdministratorService } from "src/services/administrator/administrator.s
 import * as jwt from 'jsonwebtoken';
 import { jwtDataAdministratorDto } from "src/dtos/administrator/jwt.data.administrator.dto";
 import { JwtSecret } from "config/jwt.secret";
+
 @Injectable()
 export class AuthMiddlewere implements NestMiddleware {
-    constructor( private readonly administratorService: AdministratorService ) { } 
+    constructor( private  administratorService: AdministratorService ) { } 
 
     async use(req: Request, res: Response, next: NextFunction) {
         
-       if (!req.headers.authorization){
+       if (!req.headers.authorization) {
             throw new HttpException('token not found', HttpStatus.UNAUTHORIZED);
        }
 
