@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Req, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Param, Post, Req, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Crud } from "@nestjsx/crud";
 import { StorageConfig } from "config/storage.config";
@@ -132,4 +132,29 @@ export class ArticleControler {
         }
         return savedPhoto;
     }
-}
+
+    @Delete(':articleId/deletePhoto/:photoId')
+    public async deletePhoto(
+        @Param('articleId') articleId: number,
+        @Param('photoId') photoId: number,
+        ){
+            const photo = await this.photoService.findOne({
+                articleId: articleId,
+                photoId: photoId
+            });
+            if(!photo){
+                return new ApiResponse('error', -5000, 'nije nadjena fotografija');
+            }
+
+            try{
+            fs.unlinkSync(StorageConfig.photo.destination + photo.imagePath);
+            fs.unlinkSync(StorageConfig.photo.destination + StorageConfig.photo.resize.velike.derectory + photo.imagePath);
+            fs.unlinkSync(StorageConfig.photo.destination + StorageConfig.photo.resize.male.derectory + photo.imagePath);
+            }catch(e){ }
+        const deleteResoult = await this.photoService.deleteByID(photoId);
+            if(deleteResoult.affected == 0){
+                return new ApiResponse('error', -5000, 'nije nadjena fotografija');
+            }
+            return new ApiResponse('ok', 0, 'obrisana fotografija');
+        }
+    }
