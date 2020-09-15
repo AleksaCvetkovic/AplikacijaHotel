@@ -3,6 +3,7 @@ export const StorageConfig = {
 
     photo: {
         destination: '../storage/Photos',
+        urlPrefix: '/assets/photos',
         maxSize: 3*1024,
         resize: {
             velike:{
