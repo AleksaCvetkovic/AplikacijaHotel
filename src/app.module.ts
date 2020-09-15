@@ -22,6 +22,7 @@ import { AuthMiddlewere } from './middlewers/auth.middlewer';
 import { PhotoService } from './services/Photo/photo.service';
 import { FeatureService } from './services/feature/feature.service';
 import { FeatureControler } from './controllers/api/feature.controller';
+import { UserService } from './services/user/user.service';
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { FeatureControler } from './controllers/api/feature.controller';
     ArticleService,
     PhotoService,
     FeatureService,
+    UserService,
   ],
   exports: [
     AdministratorService,

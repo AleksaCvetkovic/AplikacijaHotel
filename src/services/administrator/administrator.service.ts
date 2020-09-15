@@ -37,7 +37,7 @@ export class AdministratorService {
     add(data: addAdministratorDto): Promise<Administrator | ApiResponse> {
         
 
-        const passwordHash = crypto.createHash('sha521');
+        const passwordHash = crypto.createHash('sha512');
         passwordHash.update(data.password);
         const passwordHashString = passwordHash.digest('hex').toUpperCase();
 
