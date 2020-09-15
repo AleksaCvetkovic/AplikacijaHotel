@@ -9,7 +9,7 @@ import { jwtDataAdministratorDto } from "src/dtos/administrator/jwt.data.adminis
 import { Request } from "express";
 import { JwtSecret } from "config/jwt.secret";
 
-@Controller('auth/')
+@Controller('auth')
 export class AuthController {
     constructor(public administratorService: AdministratorService){ }
 
