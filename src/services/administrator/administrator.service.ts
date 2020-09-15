@@ -18,9 +18,9 @@ export class AdministratorService {
     getAll(): Promise<Administrator[]> {
         return this.administrator.find();
     }
-    async getByEmail(emailString: string): Promise<Administrator | null>{
+    async getByEmail(email: string): Promise<Administrator | null>{
         const admin = await this.administrator.findOne({
-            email: emailString
+            email: email
         });
 
         if (admin){

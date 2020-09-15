@@ -35,4 +35,18 @@ export class  UserService extends TypeOrmCrudService<User> {
             return new ApiResponse('error', 7001, 'ne mozete kreirati usera')
         }
     }
+    async getById(id){
+        return await this.user.findOne(id);
+    }
+    async getByEmail(email: string): Promise<User | null>{
+        const user = await this.user.findOne({
+            email: email
+        });
+
+        if (user){
+            return user;
+        }
+        return null;
+
+    }
 }

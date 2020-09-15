@@ -3,13 +3,14 @@ import { loginAdministratorDto } from "src/dtos/administrator/login.administrato
 import { ApiResponse } from "src/misk/api.response.class";
 import { AdministratorService } from "src/services/administrator/administrator.service";
 import * as crypto from 'crypto';
-import { LoginInfoAdministratorDto } from "src/dtos/administrator/loginInfo.administrator.dto";
+import { LoginInfoDto } from "src/dtos/auth/loginInfo.dto";
 import * as jwt from 'jsonwebtoken';
-import { jwtDataAdministratorDto } from "src/dtos/administrator/jwt.data.administrator.dto";
+import { jwtDataDto } from "src/dtos/auth/jwt.data.dto";
 import { Request } from "express";
 import { JwtSecret } from "config/jwt.secret";
 import { UserRegistrationDto } from "src/dtos/user/user.registration.dto";
 import { UserService } from "src/services/user/user.service";
+import { loginUserDto } from "src/dtos/user/login.user.dto";
 
 @Controller('auth')
 export class AuthController {
@@ -18,8 +19,8 @@ export class AuthController {
         public userService: UserService,
         ){ }
 
-    @Post('login')    
-    async doLogin(@Body() data: loginAdministratorDto,@Req()  req: Request): Promise<LoginInfoAdministratorDto | ApiResponse> {
+    @Post('administrator/login')    
+    async doAdministratorLogin(@Body() data: loginAdministratorDto,@Req()  req: Request): Promise<LoginInfoDto | ApiResponse> {
         const administrator = await  this.administratorService.getByEmail(data.email); 
 
         if (!administrator) {
@@ -33,22 +34,24 @@ export class AuthController {
             if (administrator.passwordHash !== passwordHashString) {
                 return new Promise(resolve => resolve(new ApiResponse('error', -3002)));
             }
-            const jwtData = new jwtDataAdministratorDto();
-
-            jwtData.administratorId = administrator.administratorId;
+            const jwtData = new jwtDataDto();
+            jwtData.role = 'administrator';
+            jwtData.id = administrator.administratorId;
             jwtData.email = administrator.email;
 
-            const sada = new Date();
-            sada.setDate(sada.getDate() + 7);
-            const istekDatuma = sada.getTime() / 1000.;
+            // eslint-disable-next-line prefer-const
+            let sada = new Date();
+            sada.setDate(sada.getDate() + 14);
+            const istekDatuma = sada.getTime() / 1000;
             jwtData.exp = istekDatuma;
 
             jwtData.ip = req.ip.toString();
             jwtData.ua = req.headers["user-agent"];
 
-            const token: string = jwt.sign(jwtData.toPlainObejt(), JwtSecret);
+            // eslint-disable-next-line prefer-const
+            let token: string = jwt.sign(jwtData.toPlainObejt(), JwtSecret);
 
-            const responseObject = new LoginInfoAdministratorDto(
+            const responseObject = new LoginInfoDto(
                 administrator.administratorId,
                 administrator.email,
                 token
@@ -60,4 +63,44 @@ export class AuthController {
     async registracijaUsera(@Body() data: UserRegistrationDto) {
         return await this.userService.register(data);
     }
+    @Post('user/login')    
+    async doUserLogin(@Body() data: loginUserDto,@Req()  req: Request): Promise<LoginInfoDto | ApiResponse> {
+        const user = await  this.userService.getByEmail(data.email); 
+
+        if (!user) {
+            return new Promise(resolve => 
+                resolve(new ApiResponse('error', -3001)));
+        }
+            const passwordHash = crypto.createHash('sha512');
+            passwordHash.update(data.password);
+            const passwordHashString = passwordHash.digest('hex').toUpperCase();
+
+            if (user.passwordHash !== passwordHashString) {
+                return new Promise(resolve => resolve(new ApiResponse('error', -3002)));
+            }
+            const jwtData = new jwtDataDto();
+            jwtData.role = 'user';
+            jwtData.id = user.userId;
+            jwtData.email = user.email;
+
+            // eslint-disable-next-line prefer-const
+            let sada = new Date();
+            sada.setDate(sada.getDate() + 14);
+            const istekDatuma = sada.getTime() / 1000;
+            jwtData.exp = istekDatuma;
+
+            jwtData.ip = req.ip.toString();
+            jwtData.ua = req.headers["user-agent"];
+
+            // eslint-disable-next-line prefer-const
+            let token: string = jwt.sign(jwtData.toPlainObejt(), JwtSecret);
+
+            const responseObject = new LoginInfoDto(
+                user.userId,
+                user.email,
+                token
+            );
+
+                return new Promise(resolve => resolve(responseObject));
+      }
 }
