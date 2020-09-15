@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Put, Req } from "@nestjs/common"
+import { Body, Controller, Post, Req } from "@nestjs/common"
 import { loginAdministratorDto } from "src/dtos/administrator/login.administrator.dto";
 import { ApiResponse } from "src/misk/api.response.class";
 import { AdministratorService } from "src/services/administrator/administrator.service";
@@ -59,7 +59,7 @@ export class AuthController {
 
                 return new Promise(resolve => resolve(responseObject));
     }
-    @Put('user/register')
+    @Post('user/register')
     async registracijaUsera(@Body() data: UserRegistrationDto) {
         return await this.userService.register(data);
     }

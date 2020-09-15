@@ -44,12 +44,28 @@ import { AllowToRoles } from "src/misk/allow.to.reles.descriptor";
             },
             features: {
                 eager: true
-            },
+            }
         }
     },
     routes:{
-        exclude: [ 'updateOneBase', 'replaceOneBase', 'deleteOneBase' ],
-    }
+        only: [
+            'getOneBase',
+            'getManyBase',
+        ],
+        getOneBase: {
+            decorators: [
+                UseGuards(roleCheckedGuard),
+                AllowToRoles('administrator', 'user')
+
+            ],
+        },
+        getManyBase: {
+            decorators: [
+                UseGuards(roleCheckedGuard),
+                AllowToRoles('administrator', 'user')
+            ],
+        },
+    },
 })
 export class ArticleControler {
     constructor(public service: ArticleService,
