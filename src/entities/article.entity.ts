@@ -15,6 +15,7 @@ import { ArticlePrice } from "./article-price.entity";
 import { Photo } from "./photo.entity";
 import { Reservation } from "./reservation.entity";
 import { Feature } from "./feature.entity";
+import * as Validator from 'class-validator';
 
 @Index("fk_article_category_id", ["categoryId"], {})
 @Entity("article")
@@ -23,15 +24,24 @@ export class Article {
   articleId: number;
 
   @Column( {type: "varchar", name: "name", length: 128 })
+  @Validator.IsNotEmpty()
+  @Validator.IsString()
+  @Validator.Length(5,128)
   name: string;
 
   @Column( {type: "int", name: "category_id", unsigned: true })
   categoryId: number;
 
   @Column( {type: "varchar", length: 255 })
+  @Validator.IsNotEmpty()
+  @Validator.IsString()
+  @Validator.Length(5,255)
   except: string;
 
   @Column( { type: "text"})
+  @Validator.IsNotEmpty()
+  @Validator.IsString()
+  @Validator.Length(54,12*100)
   description: string;
 
   @Column( {
@@ -39,6 +49,9 @@ export class Article {
     enum: ["availeble", "not availeble"],
     default: () => "'availeble'",
   })
+  @Validator.IsNotEmpty()
+  @Validator.IsString()
+  @Validator.IsIn(["availeble", "not availeble"])
   status: "availeble" | "not availeble";
 
   @ManyToOne(() => Category, (category) => category.articles, {
